@@ -1,6 +1,9 @@
-# Import the required libraries
 import streamlit as st
 from scrapegraphai.graphs import SmartScraperGraph
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
 
 # Set up the Streamlit app
 st.title("Web Scrapping AI Agent 🕵️‍♂️")
@@ -26,13 +29,19 @@ if openai_access_token:
     # Get the user prompt
     user_prompt = st.text_input("What you want the AI agent to scrape from the website?")
     
-    # Create a SmartScraperGraph object
-    smart_scraper_graph = SmartScraperGraph(
-        prompt=user_prompt,
-        source=url,
-        config=graph_config
-    )
-    # Scrape the website
-    if st.button("Scrape"):
-        result = smart_scraper_graph.run()
-        st.write(result)
+    if url and user_prompt:
+        try:
+            # Create a SmartScraperGraph object
+            smart_scraper_graph = SmartScraperGraph(
+                prompt=user_prompt,
+                source=url,
+                config=graph_config
+            )
+            # Scrape the website
+            if st.button("Scrape"):
+                result = smart_scraper_graph.run()
+                st.write(result)
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+            logging.error("An error occurred", exc_info=True)
+
